@@ -12,17 +12,15 @@
 
 ;exists
 (define (exists x lst)
-  
-       (cond ( (null? lst) #f)
-            
-            ( (equal? x lst )  #t )
+       (if (null? lst) #f
            
+            (if (equal? x (car lst))  #t
                 
-            (else (if (equal? x (car lst) ) #t (exists x (cdr lst)) ) )
-            
+                                     (exists x (cdr lst)) 
             )
-  )
-       
+       )
+) 
+
 
 
 (define (make-graph)
@@ -36,23 +34,17 @@
             
             (begin
               
-                (set! globalList (cons x globalList) )
+                (set! globalList (append globalList x) )
                 
                 #t)
             
            #f) )
 
    (define (add-edge x y)
-
-     ;if two nodes exist
-     ;create edge if it doesnt exist
-     
       
         (set! balance (+ balance amount))
       
         balance)
-
-  
 
    (define (remove-node x y)
       
