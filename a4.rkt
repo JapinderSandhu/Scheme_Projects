@@ -10,29 +10,61 @@
         (else (cons (car L1)
                (append (cdr L1) L2)))))
 
-;exists
-(define (exists x lst)
+;exists-node
+(define (exists-node x list)
+
+  (newline)
+
+  (display list)
   
-       (cond ( (null? lst) #f)
+    (cond
+      
+        ((null? list) #f)
+
+  
+        ( (and (not(list? list)) (eq? list x) ) #t)
+        
+        ( (eq? (car list) x) #t)
+
+        ( (eq? (car (car list)) x) #t)
+        
+        (else (exists-node x (cdr list)))
+
+        )
+
+  )
+
+
+       
+;exists-edge
+(define (exists-edge x y lst)
+
+      ;find node x
+      ;if edges dont exist return false
+      (cond ((and (exists-node x lst) (exists-node y lst)) #f)
             
-            ( (equal? x lst )  #t )
+            ;if list is one item and found node, no edge connected 
+            ( (equal? x lst )  #f )
            
-                
-            (else (if (equal? x (car lst) ) #t (exists x (cdr lst)) ) )
+            ;if list is more than 1 item
+            (else (if (equal? x (car lst) )
+
+                      ;if found node x check edge list for node y
+                      (exists-node y (cdr lst))
+
+                      (exists-node x (cdr lst)) ) )
             
             )
-  )
-       
 
+  )
 
 (define (make-graph)
 
-  (define globalList '())
+  (define globalList '() )
 
-  
    (define (add-node x)
       
-        (if (not (exists x globalList))
+        (if (not (exists-node x globalList))
             
             (begin
               
@@ -46,13 +78,18 @@
 
      ;if two nodes exist
      ;create edge if it doesnt exist
-     
-      
-        (set! balance (+ balance amount))
-      
-        balance)
+     (if (exists-edge x y globalList)
 
-  
+         ;if edge already exists
+         #f
+
+         ;add edge
+         (begin
+              
+           (set! globalList (cons x globalList) )
+                
+           #t))
+     )
 
    (define (remove-node x y)
       
@@ -82,3 +119,6 @@
 			                  (display method)(newline)))))
 
     dispatch)
+
+
+(define (l) (cons 'a '( (b c) ) ) )
