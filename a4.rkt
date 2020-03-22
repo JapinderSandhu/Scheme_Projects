@@ -12,51 +12,58 @@
 
 ;exists-node
 (define (exists-node x list)
-
-  (newline)
-
-  (display list)
   
     (cond
       
         ((null? list) #f)
-
-  
-        ( (and (not(list? list)) (eq? list x) ) #t)
-        
-        ( (eq? (car list) x) #t)
-
-        ( (eq? (car (car list)) x) #t)
-        
+        ;check if the first element of the first element = x 
+        ( (eq? (caar list) x) #t)
+        ;else tail recursion
         (else (exists-node x (cdr list)))
 
         )
 
   )
 
+;exists-element
+;used for single dimensional lists
+(define (exists-element x list)
+    (cond
+      
+        ((null? list) #f)
+        ;check if the first element of the first element = x 
+        ( (eq? (car list) x) #t)
+        ;else tail recursion
+        (else (exists-element x (cdr list)))
 
-       
-;exists-edge
-(define (exists-edge x y lst)
-
-      ;find node x
-      ;if edges dont exist return false
-      (cond ((and (exists-node x lst) (exists-node y lst)) #f)
-            
-            ;if list is one item and found node, no edge connected 
-            ( (equal? x lst )  #f )
-           
-            ;if list is more than 1 item
-            (else (if (equal? x (car lst) )
-
-                      ;if found node x check edge list for node y
-                      (exists-node y (cdr lst))
-
-                      (exists-node x (cdr lst)) ) )
-            
-            )
+        )
 
   )
+
+;exists-edge
+(define (exists-edge x y list)
+
+
+  (newline)
+  (display list)
+  
+  (cond ( (not (and (exists-node x list) (exists-node y list)) ) #f )
+
+        ;base case
+        ((null? list) #f)
+
+        ;check if the first element of the first element = x
+        ;and if y is in that list
+        ( (and (eq? (caar list) x) (exists-element y  (car list) ) ) #t)
+
+        ;else tail recursion
+        (else (exists-edge x (cdr list)))
+
+        )
+  
+
+  )
+
 
 (define (make-graph)
 
@@ -66,30 +73,32 @@
       
         (if (not (exists-node x globalList))
             
-            (begin
+            (begin 
               
-                (set! globalList (cons x globalList) )
+                (set! globalList (cons (cons x '()) globalList) )
                 
                 #t)
             
            #f) )
 
-   (define (add-edge x y)
+  (define (add-edge x y)
 
-     ;if two nodes exist
-     ;create edge if it doesnt exist
-     (if (exists-edge x y globalList)
+     
+     ;if edge exist, return false
+     (cond ( (exists-edge x y globalList) #f)
 
-         ;if edge already exists
-         #f
 
-         ;add edge
-         (begin
+           ;if nodes do not exist, return false
+           ( (not (and (exists-node x globalList) (exists-node y globalList) )) #f)
+
+           
+           ;create edge if it doesnt exist
+           (else (begin
               
-           (set! globalList (cons x globalList) )
+             (set! globalList (cons x globalList) )
                 
-           #t))
-     )
+             #t) ) )
+    )
 
    (define (remove-node x y)
       
